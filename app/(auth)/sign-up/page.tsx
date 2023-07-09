@@ -107,7 +107,7 @@ export default function Page() {
               )}
             />
             <div className="mt-4 space-x-2 flex items-center justify-between w-full">
-              <div className="text-sm">Have an account? <Link className="font-bold text-sm text-orange-500 hover:text-orange-800" href={'/sign-in'}>sign-in</Link></div>
+              <div className="text-sm">Have an account? <Link prefetch={false} className="font-bold text-sm text-orange-500 hover:text-orange-800" href={'/sign-in'}>sign-in</Link></div>
               <Button disabled={loading} type="submit">Continue</Button>
             </div>
           </form>
