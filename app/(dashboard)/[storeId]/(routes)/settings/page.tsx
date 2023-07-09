@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { auth } from "@clerk/nextjs";
+import { getDataFromToken } from '@/actions/get-data-from-token';
 
 import prismadb from "@/lib/prismadb";
 
@@ -10,7 +10,7 @@ const SettingsPage = async ({
 }: {
   params: { storeId: string }
 }) => {
-  const { userId } = auth();
+  const { userId } = getDataFromToken();
 
   if (!userId) {
     redirect('/sign-in');

@@ -7,11 +7,12 @@ const SizePage = async ({
 }: {
   params: { sizeId: string }
 }) => {
-  const size = await prismadb.size.findUnique({
-    where: {
-      id: params.sizeId
-    }
-  });
+  const size = params.sizeId === 'new' ? null :
+    await prismadb.size.findUnique({
+      where: {
+        id: params.sizeId
+      }
+    });
 
   return ( 
     <div className="flex-col">

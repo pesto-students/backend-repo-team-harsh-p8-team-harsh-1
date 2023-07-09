@@ -1,14 +1,14 @@
 import { NextResponse } from 'next/server';
 
 import prismadb from '@/lib/prismadb';
-import { auth } from '@clerk/nextjs';
+import { getDataFromToken } from '@/actions/get-data-from-token';
  
 export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
   try {
-    const { userId } = auth();
+    const { userId } = getDataFromToken();
 
     const body = await req.json();
 

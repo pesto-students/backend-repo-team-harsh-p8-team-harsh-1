@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
-import { auth } from '@clerk/nextjs';
+import { getDataFromToken } from '@/actions/get-data-from-token';
 
 import prismadb from '@/lib/prismadb';
 
@@ -8,12 +8,13 @@ export default async function SetupLayout({
 }: {
   children: React.ReactNode
 }) {
-  const { userId } = auth();
+  const { userId } = getDataFromToken();
 
   if (!userId) {
     redirect('/sign-in');
   }
 
+  console.log('Store', Math.random())
   const store = await prismadb.store.findFirst({
     where: {
       userId,
@@ -25,8 +26,8 @@ export default async function SetupLayout({
   };
 
   return (
-    <>
+    <div className="flex items-center justify-center h-full w-full antialiased bg-gradient-to-br from-green-100 to-white">
       {children}
-    </>
+    </div>
   );
 };

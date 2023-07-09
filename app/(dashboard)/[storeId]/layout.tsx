@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
-import { auth } from '@clerk/nextjs';
+import { getDataFromToken } from '@/actions/get-data-from-token';
 
 import Navbar from '@/components/navbar'
 import prismadb from '@/lib/prismadb';
@@ -11,7 +11,7 @@ export default async function DashboardLayout({
   children: React.ReactNode
   params: { storeId: string }
 }) {
-  const { userId } = auth();
+  const { userId } = getDataFromToken();
 
   if (!userId) {
     redirect('/sign-in');

@@ -1,4 +1,3 @@
-import { ClerkProvider } from '@clerk/nextjs'
 import { Inter } from 'next/font/google'
 
 import { ModalProvider } from '@/providers/modal-provider'
@@ -20,20 +19,18 @@ export default async function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    // <ClerkProvider>
-      <html lang="en">
-        <body className={inter.className}>
-          {/* <ThemeProvider 
-            attribute="class" 
-            defaultTheme="system" 
-            enableSystem
-          > */}
-            <ToastProvider />
-            <ModalProvider />
-            {children}
-          {/* </ThemeProvider> */}
-        </body>
-      </html>
-    // </ClerkProvider>
+    <html lang="en">
+      <body className={inter.className}>
+        <ThemeProvider 
+          attribute="class" 
+          defaultTheme="light" 
+          enableSystem
+        >
+          <ToastProvider />
+          <ModalProvider />
+          {children}
+        </ThemeProvider>
+      </body>
+    </html>
   )
 }

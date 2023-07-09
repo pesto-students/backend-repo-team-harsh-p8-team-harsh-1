@@ -23,7 +23,6 @@ export async function POST( req: Request ) {
     if(!validPassword) {
       return new NextResponse("Invalid Credentials!", { status: 400 });
     }
-    // user.save();
 
     //create token data
     const tokenDate = {
@@ -38,12 +37,8 @@ export async function POST( req: Request ) {
       success: true
     })
 
+    // set token to cookies
     response.cookies?.set('token', token, {httpOnly: true})
-    // await prismadb.user.create({
-    //   data: {
-    //     email, 
-    //   }
-    // });
 
     return response
 

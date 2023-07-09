@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs";
+import { getDataFromToken } from '@/actions/get-data-from-token';
 
 import prismadb from "@/lib/prismadb";
 
@@ -9,7 +9,7 @@ export async function PATCH(
   { params }: { params: { storeId: string } }
 ) {
   try {
-    const { userId } = auth();
+    const { userId } = getDataFromToken();
     const body = await req.json();
 
     const { name } = body;
@@ -49,7 +49,7 @@ export async function DELETE(
   { params }: { params: { storeId: string } }
 ) {
   try {
-    const { userId } = auth();
+    const { userId } = getDataFromToken();
 
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
