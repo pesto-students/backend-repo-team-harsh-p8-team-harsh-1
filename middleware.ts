@@ -1,23 +1,40 @@
+import { jwtVerify } from "jose";
 import { NextResponse } from "next/server";
 import type { NextRequest} from "next/server";
 
-export function middleware (request: NextRequest){
+export async function middleware (request: NextRequest){
   const path = request.nextUrl.pathname
-  console.log("middleware", path);
-
   const isPublicPath = path === '/sign-in' || path === '/sign-up';
-  const token = request.cookies.get('token')?.value || '';
+  
+  console.log("middleware", path);
+  
+  // verify jwt token
+  const token = request.cookies.get('token')?.value;
+  const verifiedToken = token && (await verifyJwtToken(token))
 
-  if(isPublicPath && token) {
+  if(!verifiedToken && !isPublicPath){
+    const response = NextResponse.redirect(new URL('/sign-in', request.nextUrl));
+    response.cookies.delete('token')
+    return response;
+  }
+
+  if(isPublicPath && verifiedToken) {
     return NextResponse.redirect(new URL('/', request.nextUrl));
   }
 
-  if(!token && !isPublicPath) {
-    return NextResponse.redirect(new URL('/sign-in', request.nextUrl));
+}
+
+async function verifyJwtToken(token: string): Promise<Boolean> {
+  try {
+    const { payload } = await jwtVerify(token, new TextEncoder().encode(process.env.JWT_SECRET));
+    return !!payload;
+  } catch (error) {
+    console.log('[jwtVerify]',error);
+    return false;
   }
 }
 
 export const config = {
-  matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],
-  // matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)',],
+  // matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)',],
 };

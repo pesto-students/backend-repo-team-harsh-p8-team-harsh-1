@@ -14,7 +14,6 @@ export default async function SetupLayout({
     redirect('/sign-in');
   }
 
-  console.log('Store', Math.random())
   const store = await prismadb.store.findFirst({
     where: {
       userId,
