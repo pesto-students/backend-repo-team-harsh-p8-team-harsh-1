@@ -6,8 +6,6 @@ export async function middleware (request: NextRequest){
   const path = request.nextUrl.pathname
   const isPublicPath = path === '/sign-in' || path === '/sign-up';
   
-  console.log("middleware", path);
-  
   // verify jwt token
   const token = request.cookies.get('token')?.value;
   const verifiedToken = token && (await verifyJwtToken(token))
