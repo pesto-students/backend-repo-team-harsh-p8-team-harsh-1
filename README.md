@@ -7,7 +7,7 @@ Key Features:
 
 - We will be using Shadcn UI for the Admin!
 - Our admin dashboard is going to serve as both CMS, Admin and API!
-- We will be able to control mulitple vendors / stores through this single CMS! (For example We can have a "Shoe store" and a "Laptop store" and a "Suit store", and our CMS will generate API routes for all of those individually!)
+- We will be able to control multiple vendors / stores through this single CMS! (For example We can have a "Shoe store" and a "Laptop store" and a "Suit store", and our CMS will generate API routes for all of those individually!)
 - We will be able to create, update and delete categories!
 - We will be able to create, update and delete products!
 - We will be able to upload multiple images for products, and change them whenever We want!
@@ -17,11 +17,11 @@ Key Features:
 - We will be able to control which products are "featured" so they show on the homepage!
 - We will be able to see your orders, sales, etc.
 - We will be able to see graphs of your revenue etc.
-- We will learn JWT Authentication!
+- We will use JWT Authentication!
 - Order creation
 - Stripe checkout
 - Stripe webhooks
-- MOngoDB + Prisma + PlanetScale
+- MOngoDB + Prisma
 
 ### Prerequisites
 
@@ -54,7 +54,7 @@ STRIPE_WEBHOOK_SECRET=
 JWT_SECRET=
 ```
 
-### Connect to PlanetScale and Push Prisma
+### Connect to DB and Push Prisma
 ```shell
 npx prisma generate
 npx prisma db push
