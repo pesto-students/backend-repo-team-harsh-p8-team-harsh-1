@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import Link from "next/link";
@@ -24,12 +24,19 @@ export default function Page() {
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: 'admin@gmail.com',
+      password: '12345'
+    }
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setLoading(true);
       const response = await axios.post('/api/auth/sign-in', values);
+      if(!response.data?.isAdmin){
+        return toast.error("Not a Admin User!");
+      }
       router.push('/');
       toast.success(response.data.message)
     } catch (error: any) {
@@ -42,8 +49,8 @@ export default function Page() {
 
   return (
     <div className="p-2 w-full md:w-full lg:w-1/2 mx-auto md:mx-0">
-      <div className="bg-white p-10 flex flex-col w-full shadow-xl rounded-xl">
-        <h2 className="text-2xl font-bold text-gray-800 text-left mb-5">
+      <div className="p-10 flex flex-col w-full shadow-2xl rounded-2xl">
+        <h2 className="text-2xl font-bold text-left mb-5">
           Sigin
         </h2>
         <Form {...form} >
@@ -68,14 +75,14 @@ export default function Page() {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input placeholder="password" {...field} />
+                    <Input type="password" placeholder="password" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <div className="mt-4 space-x-2 flex items-center justify-between w-full">
-              <div className="text-sm">Don&apos;t have an account? <Link prefetch={false} className="font-bold text-sm text-orange-500 hover:text-orange-800" href={'/sign-up'}>sign-up</Link></div>
+              <div className="text-sm">Don&apos;t have an account? <Link prefetch={false} className="font-bold text-sm text-orange-500 hover:text-orange-800" href={"mailto:kabu8617@gmail.com"}>contact us</Link></div>
               <Button disabled={loading} type="submit">Continue</Button>
             </div>
           </form>

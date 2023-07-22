@@ -25,7 +25,7 @@ export async function middleware (request: NextRequest){
 async function verifyJwtToken(token: string): Promise<Boolean> {
   try {
     const { payload } = await jwtVerify(token, new TextEncoder().encode(process.env.JWT_SECRET));
-    return !!payload;
+    return payload?.isAdmin as boolean;
   } catch (error) {
     console.log('[jwtVerify]',error);
     return false;

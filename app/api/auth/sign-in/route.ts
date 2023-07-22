@@ -38,14 +38,16 @@ export async function POST( req: Request ) {
     const tokenDate = {
       userId: user.id,
       userName: user.name,
-      userEmail: user.email
+      userEmail: user.email,
+      isAdmin: user.isAdmin
     }
     const token = await jwt.sign(tokenDate, process.env.JWT_SECRET!, {expiresIn: '1d'})
 
     const response = NextResponse.json({
       message: "Login successfully",
       success: true,
-      token
+      isAdmin: user.isAdmin,
+      token,
     },{headers: corsHeaders})
 
     // set token to cookies
