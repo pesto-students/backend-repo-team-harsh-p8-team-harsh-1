@@ -4,7 +4,8 @@ import type { NextRequest} from "next/server";
 
 export async function middleware (request: NextRequest){
   const path = request.nextUrl.pathname
-  const isPublicPath = path === '/sign-in' || path === '/sign-up';
+  // const isPublicPath = path === '/sign-in' || path === '/sign-up';
+  const isPublicPath = path === '/sign-in';
   
   // verify jwt token
   const token = request.cookies.get('token')?.value;
