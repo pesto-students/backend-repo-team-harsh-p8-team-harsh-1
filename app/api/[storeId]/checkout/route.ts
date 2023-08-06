@@ -4,6 +4,13 @@ import { NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import prismadb from "@/lib/prismadb";
 
+interface payload {
+  orderProducts: Array<{
+    id: string,
+    quantity: number
+  }>
+}
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
@@ -18,25 +25,24 @@ export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
-  const { productIds } = await req.json();
+  const { orderProducts }:payload = await req.json();
 
-  if (!productIds || productIds.length === 0) {
+  if (!orderProducts || orderProducts.length === 0) {
     return new NextResponse("Product ids are required", { status: 400 });
   }
-
   const products = await prismadb.product.findMany({
     where: {
       id: {
-        in: productIds
+        in: orderProducts.map(({id})=> id)
       }
     }
   });
 
   const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
 
-  products.forEach((product) => {
+  products.forEach((product, idx) => {
     line_items.push({
-      quantity: 1,
+      quantity: orderProducts[idx].quantity,
       price_data: {
         currency: 'INR',
         product_data: {
@@ -52,11 +58,10 @@ export async function POST(
       storeId: params.storeId,
       isPaid: false,
       orderItems: {
-        create: productIds.map((productId: string) => ({
+        create: orderProducts.map(({id, quantity}) => ({
+          quantity,
           product: {
-            connect: {
-              id: productId
-            }
+            connect: { id }
           }
         }))
       }
@@ -66,7 +71,7 @@ export async function POST(
   const session = await stripe.checkout.sessions.create({
     line_items,
     mode: 'payment',
-    billing_address_collection: 'required',
+    // billing_address_collection: 'required',
     phone_number_collection: {
       enabled: true,
     },
