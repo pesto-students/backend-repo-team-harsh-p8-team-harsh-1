@@ -3,8 +3,10 @@ import { NextResponse } from "next/server";
 
 import { stripe } from "@/lib/stripe";
 import prismadb from "@/lib/prismadb";
+import { getUserFromHeaders } from "@/actions/get-user-from-header";
 
 interface payload {
+  addressId: string
   orderProducts: Array<{
     id: string,
     quantity: number
@@ -21,14 +23,19 @@ export async function OPTIONS() {
   return NextResponse.json({}, { headers: corsHeaders });
 }
 
-export async function POST(
-  req: Request,
-  { params }: { params: { storeId: string } }
-) {
-  const { orderProducts }:payload = await req.json();
-
-  if (!orderProducts || orderProducts.length === 0) {
+export async function POST( req: Request, { params }: { params: { storeId: string } } ) {
+  const { orderProducts, addressId }:payload = await req.json();
+  
+  const { userId } = getUserFromHeaders();
+  
+  if (!userId) {
+    return new NextResponse("Unauthorized", { status: 403 });
+  }
+  if (!orderProducts || orderProducts.length === 0 ) {
     return new NextResponse("Product ids are required", { status: 400 });
+  }
+  if ( !addressId ) {
+    return new NextResponse("address id required", { status: 400 });
   }
   const products = await prismadb.product.findMany({
     where: {
@@ -37,7 +44,7 @@ export async function POST(
       }
     }
   });
-
+  
   const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
 
   products.forEach((product, idx) => {
@@ -55,6 +62,8 @@ export async function POST(
 
   const order = await prismadb.order.create({
     data: {
+      userId,
+      addressId,
       storeId: params.storeId,
       isPaid: false,
       orderItems: {
@@ -73,7 +82,7 @@ export async function POST(
     mode: 'payment',
     // billing_address_collection: 'required',
     phone_number_collection: {
-      enabled: true,
+      enabled: false,
     },
     success_url: `${process.env.FRONTEND_STORE_URL}/cart?success=1`,
     cancel_url: `${process.env.FRONTEND_STORE_URL}/cart?canceled=1`,

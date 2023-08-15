@@ -51,7 +51,7 @@ export async function POST( req: Request ) {
     },{headers: corsHeaders})
 
     // set token to cookies
-    response.cookies?.set('token', token, {httpOnly: true})
+    response.cookies?.set('token', token, {httpOnly: true, expires: Date.now() + 24 * 60 * 60 * 1000})
 
     return response
 

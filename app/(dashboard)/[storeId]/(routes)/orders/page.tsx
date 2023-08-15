@@ -17,10 +17,14 @@ const OrdersPage = async ({
       storeId: params.storeId
     },
     include: {
+      user: { 
+        select: { name: true, email: true} 
+      },
+      address: {
+        select: { name: true, phone: true, full_address:true, city: true, state: true, pin: true, }
+      },
       orderItems: {
-        include: {
-          product: true
-        }
+        include: { product: true }
       }
     },
     orderBy: {
@@ -30,11 +34,12 @@ const OrdersPage = async ({
 
   const formattedOrders: OrderColumn[] = orders.map((item) => ({
     id: item.id,
-    phone: item.phone,
-    address: item.address,
-    products: item.orderItems.map((orderItem) => orderItem.product.name).join(', '),
+    user: item.user.name ,
+    email: item.user.email,
+    address: Object.values(item.address)?.join(', '),
+    products: item.orderItems.map(({quantity, product}) => `${quantity} x ${product.name}`).join(', '),
     totalPrice: formatter.format(item.orderItems.reduce((total, item) => {
-      return total + Number(item.product.price)
+      return total + Number(item.product.price * item.quantity)
     }, 0)),
     isPaid: item.isPaid,
     createdAt: format(item.createdAt, 'MMMM do, yyyy'),

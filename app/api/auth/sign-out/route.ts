@@ -12,10 +12,10 @@ export async function OPTIONS() {
 
 export async function GET() {
   try {
-    const response = NextResponse.json({ message: "Logout Successfully", success: true});
+    const response = NextResponse.json({ message: "Logout Successfully", success: true}, {headers: corsHeaders});
     response.cookies.set('token', '', { httpOnly: true, expires: new Date(0) });
     return response;
   } catch (error: any) {
-    return new NextResponse(error.message, { status: 400 });
+    return new NextResponse(error.message, { status: 400, headers: corsHeaders });
   }
 }
