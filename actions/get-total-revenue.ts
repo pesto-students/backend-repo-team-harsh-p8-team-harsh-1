@@ -23,6 +23,5 @@ export const getTotalRevenue = async (storeId: string) => {
     return total + orderTotal;
   }, 0);
   
-  console.log({totalRevenue})
   return totalRevenue;
 };
